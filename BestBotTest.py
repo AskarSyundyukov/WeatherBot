@@ -2,7 +2,6 @@ import telebot
 import config
 import random
 import pyowm
-
 from telebot import types
 
 bot = telebot.TeleBot(config.TOKEN)
@@ -43,6 +42,14 @@ def lalala(message):
         elif message.text == 'Какая погода сейчас?':
             city = bot.send_message(message.chat.id, "В каком городе вывести погоду?")
             bot.register_next_step_handler(city, weather)
+
+            # markup = types.InlineKeyboardMarkup(row_width=2)
+            # item3 = types.InlineKeyboardButton("Санкт-Петербург", callback_data='sankt')
+            # item4 = types.InlineKeyboardButton("Уфа", callback_data='ufa')
+            #
+            # bot.register_next_step_handler(city, weather)
+
+            # markup.add(item3, item4)
 
         else:
             bot.send_message(message.chat.id, 'Error')
