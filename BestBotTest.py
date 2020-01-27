@@ -43,14 +43,6 @@ def lalala(message):
             city = bot.send_message(message.chat.id, "В каком городе вывести погоду?")
             bot.register_next_step_handler(city, weather)
 
-            # markup = types.InlineKeyboardMarkup(row_width=2)
-            # item3 = types.InlineKeyboardButton("Санкт-Петербург", callback_data='sankt')
-            # item4 = types.InlineKeyboardButton("Уфа", callback_data='ufa')
-            #
-            # bot.register_next_step_handler(city, weather)
-
-            # markup.add(item3, item4)
-
         else:
             bot.send_message(message.chat.id, 'Error')
 
@@ -67,24 +59,26 @@ def callback_inline(call):
             bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="Как дела?",
                                   reply_markup=None)
 
-            bot.answer_callback_query(callback_query_id=call.id, show_alert=False,
-                                      text="ЭТО ТЕСТОВОЕ УВЕДОМЛЕНИЕ!")
-
     except Exception as e:
         print(repr(e))
 
 
 def weather(message):
-    owm = pyowm.OWM(config.TOKEN_WEATHER)
-    city = message.text
-    weather = owm.weather_at_place(city)
-    w = weather.get_weather()
-    temperature = w.get_temperature("celsius")["temp"]
-    wind = w.get_wind()["speed"]
-    hum = w.get_humidity()
-    desc = w.get_detailed_status()
-    bot.send_message(message.chat.id, "Сейчас в городе " + str(city) + " \n" + str(desc) + ", \nТемпература: " + str(
-        temperature) + "°C, \nВлажность: " + str(hum) + "%, \nСкорость ветра: " + str(wind) + "м/с.")
+    try:
+        owm = pyowm.OWM(config.TOKEN_WEATHER)
+        city = message.text
+        weather = owm.weather_at_place(city)
+        w = weather.get_weather()
+        temperature = w.get_temperature("celsius")["temp"]
+        wind = w.get_wind()["speed"]
+        hum = w.get_humidity()
+        desc = w.get_detailed_status()
+        bot.send_message(message.chat.id, "Сейчас в городе " + str(city) + " \n" + str(desc) + ", \nТемпература: " + str(
+            temperature) + "°C, \nВлажность: " + str(hum) + "%, \nСкорость ветра: " + str(wind) + "м/с.")
+
+
+    except pyowm.exceptions.api_response_error.NotFoundError:
+        bot.send_message(message.chat.id, 'Город не найден!')
 
 
 bot.polling(none_stop=True)
