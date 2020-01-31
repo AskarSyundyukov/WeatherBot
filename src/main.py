@@ -11,6 +11,7 @@ from telegram.ext import (
 )
 
 LOG_FORMAT = '%(asctime)s %(levelname)-8s %(message)s'
+DEFAULT_CITY = 'Санкт-Петербург'
 
 
 def handle_start_command(update, context):
@@ -22,16 +23,18 @@ def handle_start_command(update, context):
 def handle_help_command(update, context):
     logging.info(f"/help command received from "
                  f"{update.effective_user.full_name} ({update.effective_chat.id})")
-    update.message.reply_text(messages.HELP_MESSAGE)
+    update.message.reply_text(messages.HELP_MESSAGE.format(
+        default_city=DEFAULT_CITY,
+    ))
 
 
 def handle_weather_command(update, context):
     logging.info(f"/weather command received from "
                  f"{update.effective_user.full_name} ({update.effective_chat.id})")
     global weather_receiver
-    weather_info = weather_receiver.get_weather_by_city(messages.DEFAULT_CITY)
+    weather_info = weather_receiver.get_weather_by_city(DEFAULT_CITY)  # TODO check for None
     update.message.reply_text(messages.WEATHER_INFO_MESSAGE.format(
-        city=weather_info.city,
+        city=DEFAULT_CITY,
         temperature=weather_info.temperature,
         humidity=weather_info.humidity,
         wind_speed=weather_info.wind_speed,
