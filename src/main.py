@@ -56,6 +56,7 @@ if __name__ == '__main__':
         LOG_LEVEL = logging.INFO
 
     logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT)
+    logging.info(f"WeatherBot started...")
 
     weather_receiver = WeatherReceiver(args.weather_token)
 
