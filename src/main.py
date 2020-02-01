@@ -8,6 +8,8 @@ from weather.WeatherReceiver import WeatherReceiver
 from telegram.ext import (
     Updater,
     CommandHandler,
+    MessageHandler,
+    Filters,
 )
 
 LOG_FORMAT = '%(asctime)s %(levelname)-8s %(message)s'
@@ -31,7 +33,6 @@ def handle_help_command(update, context):
 def handle_weather_command(update, context):
     logging.info(f"/weather command received from "
                  f"{update.effective_user.full_name} ({update.effective_chat.id})")
-    global weather_receiver
     weather_info = weather_receiver.get_weather_by_city(DEFAULT_CITY)  # TODO check for None
     update.message.reply_text(messages.WEATHER_INFO_MESSAGE.format(
         city=DEFAULT_CITY,
@@ -40,6 +41,13 @@ def handle_weather_command(update, context):
         wind_speed=weather_info.wind_speed,
         description=weather_info.description,
     ))
+
+
+def handle_text_message(update, context):
+    logging.info(f"Text message received from "
+                 f"{update.effective_user.full_name} "
+                 f"({update.effective_chat.id}): "
+                 f"{update.message.text}")
 
 
 def handle_error(update, context):
@@ -68,6 +76,7 @@ if __name__ == '__main__':
     dispatcher.add_handler(CommandHandler('start', handle_start_command))
     dispatcher.add_handler(CommandHandler('help', handle_help_command))
     dispatcher.add_handler(CommandHandler('weather', handle_weather_command))
+    dispatcher.add_handler(MessageHandler(Filters.text, handle_text_message),)
     dispatcher.add_error_handler(handle_error)
 
     updater.start_polling()
