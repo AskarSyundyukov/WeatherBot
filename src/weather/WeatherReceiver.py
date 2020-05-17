@@ -1,7 +1,7 @@
 import logging
 from pyowm import OWM
 from pyowm.exceptions.api_response_error import NotFoundError
-#Best
+#Best 
 
 class WeatherInfo:
     def __init__(self, **kwargs):
